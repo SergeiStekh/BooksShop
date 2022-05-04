@@ -11,9 +11,13 @@ class BookStore {
     this.addListeners();
   }
 
-  addListeners() {
-    Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
-    Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
+  addListeners(firstRun = true) {
+    if (firstRun) {
+      Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
+      Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
+    } else {
+      Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
+    } 
   }
 
   async fetchBooks() {
@@ -191,6 +195,7 @@ class BookStore {
 
   clearBag() {
     let element = document.querySelector(".bag");
+
     while (element.firstChild) {
       element.removeChild(element.firstChild);
     }
@@ -269,13 +274,39 @@ class BookStore {
       ul.append(li);
     })
     fragment.append(ul);
-    bagElement.append(fragment);
 
-    Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
+    if(this.bag.length > 0) {
+      let totalPriceElement = document.createElement("p");
+      totalPriceElement.classList.add("bag__total");
+      totalPriceElement.innerText = `Total price: ${this.calculateTotal()} €`;
+  
+      let confirmOrderElement = document.createElement("button");
+      confirmOrderElement.classList.add(".bag__confirm");
+      confirmOrderElement.innerText = "Confirm order";
+      
+      bagElement.append(fragment);
+      bagElement.append(totalPriceElement);
+      bagElement.append(confirmOrderElement);
+  
+      this.addListeners(false);
+    }
+    
+
+    let priceEl = document.querySelector(".bag__total") || undefined;
+    
+    if (priceEl && this.bag.length === 0) {
+      priceEl.remove();
+    }
+
+    let confirmOrderEl = document.querySelector(".bag__confirm") || undefined;
+    
+    if (confirmOrderEl && this.bag.length === 0) {
+      confirmOrderEl.remove();
+    }
   }
 
   removeBookFromBag(e) {
-    if(e) {
+    if (e) {
       e.preventDefault();
       e.stopPropagation();
     } 
@@ -291,6 +322,13 @@ class BookStore {
     this.bag.splice(removingBookIndex, 1);
 
     this.renderBag();
+  }
+
+  calculateTotal() {
+    let total = this.bag.reduce((acc,curr) => acc + curr.price, 0);
+    this.total = total;
+
+    return total
   }
 }
 

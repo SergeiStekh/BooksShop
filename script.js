@@ -2,6 +2,7 @@ class BookStore {
   constructor(booksLink) {
     this.booksLink = booksLink;
     this.bag = [];
+    this.total = 0;
   }
 
   async init() {
@@ -46,13 +47,7 @@ class BookStore {
     let bagWrapper = document.createElement("div");
     bagWrapper.classList.add("bag");
 
-    // let bag = document.createElement("ul");
-    // bag.classList.add("bag__list");
-    // bag.setAttribute("id", "bagList");
-
-    // bagWrapper.append(bag);
-
-    for (let {author, description, imageLink, price, title} of data) {
+    for (let {author, imageLink, price, title} of data) {
       let li = document.createElement("li");
       li.classList.add("books__item");
 
@@ -286,10 +281,15 @@ class BookStore {
     } 
     
     let bookName = e.target.parentNode.querySelector(".bag__title").innerHTML;
-    let removingBookIndex = this.bag.indexOf(el => el.title === bookName);
+    
+    let removingBookIndex = this.bag.findIndex(el => el.title === bookName);
+    
+    if (removingBookIndex === -1) {
+      return
+    }
+
     this.bag.splice(removingBookIndex, 1);
 
-    this.clearBag();
     this.renderBag();
   }
 }

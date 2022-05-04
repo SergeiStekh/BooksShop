@@ -1,20 +1,30 @@
 class BookStore {
   constructor(booksLink) {
     this.booksLink = booksLink;
+    this.isModalOpen = false;
   }
 
   async init() {
     this.fetchBooks().then(books => this.renderHtml(books));
   }
 
+  addListeners() {
+    Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)))
+  }
+
   async fetchBooks() {
-    const response = await fetch(this.booksLink);
-    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      throw new Error(message);
+    try {
+      const response = await fetch(this.booksLink);
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+      }
+      const books = await response.json();
+      return books;
+    } catch {
+      throw new Error("Something went wrong!");
     }
-    const books = await response.json();
-    return books;
+    
   }
 
   renderHtml(data) {
@@ -66,11 +76,6 @@ class BookStore {
       authorParagraph.textContent = author;
       contentWrapper.append(authorParagraph);
 
-      // let bookDescriptionParagraph = document.createElement("p");
-      // bookDescriptionParagraph.classList.add("books__description");
-      // bookDescriptionParagraph.textContent = description;
-      // li.append(bookDescriptionParagraph);
-
       let priceParagraph = document.createElement("p");
       priceParagraph.classList.add("books__price");
       priceParagraph.textContent = `${price} €`;
@@ -97,6 +102,94 @@ class BookStore {
 
     fragment.append(main);
     document.body.prepend(fragment);
+    this.addListeners();
+  }
+
+  async showModal(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    let bookName = e.target.parentNode.querySelector(".books__title").innerText;
+
+    let allBooks = await this.fetchBooks();
+    
+    let chosenBook = Array.from(allBooks).filter(el => el.title === bookName)[0];
+
+    let {author, description, imageLink, price, title} = chosenBook;
+    
+    let modalFragment = new DocumentFragment();
+
+    let modalWrapper = document.createElement("div");
+    modalWrapper.classList.add("modal__wrapper");
+
+    let modal = document.createElement("div");
+    modal.classList.add("modal");
+    
+    let modalBookImage = document.createElement("img");
+    modalBookImage.setAttribute("src", imageLink);
+    modalBookImage.classList.add("modal__img");
+
+    let modalTextWrapper = document.createElement("div");
+    modalTextWrapper.classList.add("modal__text-wrapper");
+
+    let closeBtn = document.createElement("div");
+    closeBtn.classList.add("modal__close");
+    closeBtn.setAttribute("id", "closeModal");
+    modal.append(closeBtn);
+
+    let modalBookTitle = document.createElement("p");
+    modalBookTitle.classList.add("modal__title");
+    modalBookTitle.innerText = title;
+    modalTextWrapper.append(modalBookTitle);
+
+    let modalBookAuthor = document.createElement("p");
+    modalBookAuthor.classList.add("modal__author");
+    modalBookAuthor.innerText = author;
+    modalTextWrapper.append(modalBookAuthor);
+
+    let modalBookDescription = document.createElement("p");
+    modalBookDescription.classList.add("modal__description");
+    modalBookDescription.innerText = description;
+    modalTextWrapper.append(modalBookDescription);
+
+    let modalBookPrice = document.createElement("p");
+    modalBookPrice.classList.add("modal__price");
+    modalBookPrice.innerText = `${price} €`;
+    modalTextWrapper.append(modalBookPrice);
+
+    modal.append(modalBookImage);
+    modal.append(modalTextWrapper);
+    modalWrapper.append(modal);
+    modalFragment.append(modalWrapper);
+    document.body.append(modalFragment);
+
+    document.querySelector(".modal__wrapper").classList.add("visible");
+    document.querySelector(".modal__wrapper").addEventListener("click", this.closeModal.bind(this));
+    document.body.style.overflow = "hidden";
+    document.querySelector("#closeModal").addEventListener("click", this.closeModal);
+  }
+
+  closeModal(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let isWrapperClick = Array.from(e.target.classList).includes("modal__wrapper");
+    let isCloseBtnClick = Array.from(e.target.classList).includes("modal__close");
+
+    if (!isWrapperClick && !isCloseBtnClick) {
+      return
+    }
+    
+    if (isWrapperClick) {
+      e.target.remove();
+    } 
+
+    if (isCloseBtnClick) {
+      e.target.parentNode.parentNode.remove();
+    }
+
+    document.body.style.overflow = "visible";
   }
 }
 

@@ -63,9 +63,10 @@ main {
 .books__img {
   box-sizing: border-box;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   max-width: 330px;
   max-height: 410px;
+  aspect-ratio: 241/235;
   width: 100%;
   height: auto;
   transition: all .3s ease;
@@ -84,6 +85,11 @@ main {
 .books__title {
   font-size: 18px;
   font-weight: 500;
+  min-height: 62.08px;
+}
+
+.books__author {
+  min-height: 36.78px;
 }
 
 .books__show-more {
@@ -99,4 +105,86 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   grid-gap: 20px;
+}
+
+/* Modal */
+
+.modal__wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  justify-items: center;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  opacity: 0;
+  animation: showUp .3s linear forwards;
+}
+
+@keyframes showUp {
+  0% {
+    display: grid;
+  }
+  15% {
+    opacity: .3;
+  }
+
+  50% {
+    opacity: .5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.modal__wrapper.visible {
+  display: grid; 
+}
+
+.modal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  width: 70vw;
+  height: 40vh;
+  background: #fff;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal__img {
+  display: block;
+  object-fit: contain;
+  width: 60%;
+  max-width: 60%;
+  height: 100%;
+}
+
+.modal__title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.modal__close {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  background-image: url("./assets/images/close-btn.svg");
+  background-size: contain;
+  border-radius: 100px;
+  top: -57px;
+  right: 0;
+  transition: all .3s linear;
+  cursor: pointer;
+}
+
+.modal__close:hover {
+  background-image: url("./assets/images/close-btn-hover.svg");
 }

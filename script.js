@@ -11,15 +11,6 @@ class BookStore {
     this.addListeners();
   }
 
-  addListeners(firstRun = true) {
-    if (firstRun) {
-      Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
-      Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
-    } else {
-      Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
-    } 
-  }
-
   async fetchBooks() {
     try {
       const response = await fetch(this.booksLink);
@@ -32,7 +23,18 @@ class BookStore {
     } catch {
       throw new Error("Something went wrong!");
     }
-    
+  }
+
+  addListeners(firstRun = true) {
+    if (firstRun) {
+      Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
+      Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
+    } else {
+      Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
+      if (document.querySelector(".bag__confirm")) {
+        document.querySelector(".bag__confirm").addEventListener("click", this.toConfirmationPage.bind(this));
+      }
+    } 
   }
 
   renderHtml(data) {
@@ -193,39 +195,6 @@ class BookStore {
     document.body.style.overflow = "visible";
   }
 
-  clearBag() {
-    let element = document.querySelector(".bag");
-
-    while (element.firstChild) {
-      element.removeChild(element.firstChild);
-    }
-  }
-
-  async addToBag(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (!e?.target?.parentNode.querySelector(".books__title")) {
-        return
-      }
-
-      let bookToAddTitle = e.target.parentNode.querySelector(".books__title").innerText;
-      
-      let addedBook = Array.from(await this.fetchBooks()).filter(el => el.title === bookToAddTitle)[0];
-      
-      let isBookInBag = this.bag.some(item => {
-        return addedBook.title === item.title
-      });
-
-      if (!isBookInBag) {
-        this.bag.push(addedBook);
-      } 
-
-      this.renderBag();
-    }
-  }
-
   renderBag() {
     this.clearBag();
 
@@ -237,7 +206,7 @@ class BookStore {
     ul.classList.add("bag__list");
 
     this.bag.forEach(el => {
-      let {author, imageLink, price, title} = el;
+      let {author, imageLink, title} = el;
 
       let li = document.createElement("li");
       li.classList.add("bag__item");
@@ -273,20 +242,23 @@ class BookStore {
 
       ul.append(li);
     })
+
     fragment.append(ul);
 
-    if(this.bag.length > 0) {
+    if (this.bag.length > 0) {
       let totalPriceElement = document.createElement("p");
       totalPriceElement.classList.add("bag__total");
       totalPriceElement.innerText = `Total price: ${this.calculateTotal()} €`;
-  
-      let confirmOrderElement = document.createElement("button");
-      confirmOrderElement.classList.add(".bag__confirm");
-      confirmOrderElement.innerText = "Confirm order";
       
       bagElement.append(fragment);
       bagElement.append(totalPriceElement);
-      bagElement.append(confirmOrderElement);
+      
+      if (!document.querySelector(".bag__confirm")) {
+        let confirmOrderElement = document.createElement("button");
+        confirmOrderElement.classList.add("bag__confirm");
+        confirmOrderElement.innerText = "Confirm order";
+        bagElement.append(confirmOrderElement);
+      }
   
       this.addListeners(false);
     }
@@ -302,6 +274,31 @@ class BookStore {
     
     if (confirmOrderEl && this.bag.length === 0) {
       confirmOrderEl.remove();
+    }
+  }
+
+  async addToBag(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!e?.target?.parentNode.querySelector(".books__title")) {
+        return
+      }
+
+      let bookToAddTitle = e.target.parentNode.querySelector(".books__title").innerText;
+      
+      let addedBook = Array.from(await this.fetchBooks()).filter(el => el.title === bookToAddTitle)[0];
+      
+      let isBookInBag = this.bag.some(item => {
+        return addedBook.title === item.title
+      });
+
+      if (!isBookInBag) {
+        this.bag.push(addedBook);
+      } 
+
+      this.renderBag();
     }
   }
 
@@ -324,11 +321,23 @@ class BookStore {
     this.renderBag();
   }
 
+  clearBag() {
+    let element = document.querySelector(".bag");
+
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
   calculateTotal() {
     let total = this.bag.reduce((acc,curr) => acc + curr.price, 0);
     this.total = total;
 
     return total
+  }
+
+  toConfirmationPage() {
+    console.log("confirm")
   }
 }
 

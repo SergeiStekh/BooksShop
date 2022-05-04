@@ -35,7 +35,7 @@ main {
 
 /* Books */
 
-.books__list {
+.books__list, .bag__list {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -44,8 +44,7 @@ main {
   grid-gap: 20px;
 }
 
-.books__item {
-  overflow: hidden;
+.books__item, .bag__item {
   position: relative;
   cursor: pointer;
   transition: all .3s ease-in;
@@ -55,12 +54,12 @@ main {
   outline: 4px solid #00AAA4;
 }
 
-.books__img-wrapper {
+.books__img-wrapper, .bag__img-wrapper {
   position: relative;
   height: auto;
 }
 
-.books__img {
+.books__img, .bag__img {
   box-sizing: border-box;
   display: block;
   object-fit: contain;
@@ -77,22 +76,22 @@ main {
   outline: 6px solid #00AAA4;
 }
 
-.books__content-wrapper {
+.books__content-wrapper, .bag__content-wrapper {
   padding: 10px;
   text-align: center;
 }
 
-.books__title {
+.books__title, .bag__title {
   font-size: 18px;
   font-weight: 500;
   min-height: 62.08px;
 }
 
-.books__author {
+.books__author, .bag__author {
   min-height: 36.78px;
 }
 
-.books__show-more {
+.books__show-more, .bag__show-more {
   margin-bottom: 15px;
 }
 
@@ -104,7 +103,25 @@ main {
   list-style: none;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  grid-gap: 20px;
+  grid-gap: 50px;
+}
+
+.bag__item {
+  cursor: initial;
+}
+
+.bag__remove {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  background-image: url("./assets/images/close-btn.svg");
+  background-size: contain;
+  border-radius: 100px;
+  bottom: -25px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  transition: all .3s linear;
+  cursor: pointer;
 }
 
 /* Modal */
@@ -185,6 +202,6 @@ main {
   cursor: pointer;
 }
 
-.modal__close:hover {
+.modal__close:hover, .bag__remove:hover {
   background-image: url("./assets/images/close-btn-hover.svg");
 }

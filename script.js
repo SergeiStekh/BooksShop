@@ -1,15 +1,18 @@
 class BookStore {
   constructor(booksLink) {
     this.booksLink = booksLink;
-    this.isModalOpen = false;
+    this.bag = [];
   }
 
   async init() {
-    this.fetchBooks().then(books => this.renderHtml(books));
+    let fetchedBooks = await this.fetchBooks();
+    this.renderHtml(fetchedBooks);
+    this.addListeners();
   }
 
   addListeners() {
-    Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)))
+    Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
+    Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
   }
 
   async fetchBooks() {
@@ -43,11 +46,11 @@ class BookStore {
     let bagWrapper = document.createElement("div");
     bagWrapper.classList.add("bag");
 
-    let bag = document.createElement("ul");
-    bag.classList.add("bag__list");
-    bag.setAttribute("id", "bagList");
+    // let bag = document.createElement("ul");
+    // bag.classList.add("bag__list");
+    // bag.setAttribute("id", "bagList");
 
-    bagWrapper.append(bag);
+    // bagWrapper.append(bag);
 
     for (let {author, description, imageLink, price, title} of data) {
       let li = document.createElement("li");
@@ -102,7 +105,6 @@ class BookStore {
 
     fragment.append(main);
     document.body.prepend(fragment);
-    this.addListeners();
   }
 
   async showModal(e) {
@@ -190,6 +192,105 @@ class BookStore {
     }
 
     document.body.style.overflow = "visible";
+  }
+
+  clearBag() {
+    let element = document.querySelector(".bag");
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
+  async addToBag(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!e?.target?.parentNode.querySelector(".books__title")) {
+        return
+      }
+
+      let bookToAddTitle = e.target.parentNode.querySelector(".books__title").innerText;
+      
+      let addedBook = Array.from(await this.fetchBooks()).filter(el => el.title === bookToAddTitle)[0];
+      
+      let isBookInBag = this.bag.some(item => {
+        return addedBook.title === item.title
+      });
+
+      if (!isBookInBag) {
+        this.bag.push(addedBook);
+      } 
+
+      this.renderBag();
+    }
+  }
+
+  renderBag() {
+    this.clearBag();
+
+    let bagElement = document.querySelector(".bag");
+
+    let fragment = new DocumentFragment();
+
+    let ul = document.createElement("ul");
+    ul.classList.add("bag__list");
+
+    this.bag.forEach(el => {
+      let {author, imageLink, price, title} = el;
+
+      let li = document.createElement("li");
+      li.classList.add("bag__item");
+  
+      let imageWrapper = document.createElement("div");
+      imageWrapper.classList.add("bag__img-wrapper");
+  
+      let imageElement = document.createElement("img");
+      imageElement.setAttribute("alt", title);
+      imageElement.setAttribute("src", imageLink);
+      imageElement.classList.add("bag__img");
+      imageWrapper.append(imageElement);
+      li.append(imageWrapper);
+  
+      let contentWrapper = document.createElement("div");
+      contentWrapper.classList.add("bag__content-wrapper");
+  
+      let titleParagraph = document.createElement("p");
+      titleParagraph.classList.add("bag__title");
+      titleParagraph.innerHTML = title;
+      contentWrapper.append(titleParagraph);
+  
+      let authorParagraph = document.createElement("p");
+      authorParagraph.classList.add("bag__author");
+      authorParagraph.textContent = author;
+      
+      let removeBookBtn = document.createElement("div");
+      removeBookBtn.classList.add("bag__remove");
+      li.append(removeBookBtn);
+      
+      contentWrapper.append(authorParagraph);
+      li.append(contentWrapper);
+
+      ul.append(li);
+    })
+    fragment.append(ul);
+    bagElement.append(fragment);
+
+    Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
+  }
+
+  removeBookFromBag(e) {
+    if(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    } 
+    
+    let bookName = e.target.parentNode.querySelector(".bag__title").innerHTML;
+    let removingBookIndex = this.bag.indexOf(el => el.title === bookName);
+    this.bag.splice(removingBookIndex, 1);
+
+    this.clearBag();
+    this.renderBag();
   }
 }
 

@@ -3,6 +3,8 @@ class BookStore {
     this.booksLink = booksLink;
     this.bag = [];
     this.total = 0;
+    this.validFormElements = ["present"];
+    this.isFormValid = false;
   }
 
   async init() {
@@ -29,6 +31,8 @@ class BookStore {
     if (firstRun) {
       Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
       Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
+      document.querySelector(".order__form").addEventListener("input", this.validateForm.bind(this));
+      document.querySelector(".order__form").addEventListener("submit", this.submitForm.bind(this));
     } else {
       Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
       if (document.querySelector(".bag__confirm")) {
@@ -38,6 +42,10 @@ class BookStore {
   }
 
   renderHtml(data) {
+    if (!data) {
+      return
+    }
+
     let fragment = new DocumentFragment();
 
     let main = document.createElement('main');
@@ -337,7 +345,126 @@ class BookStore {
   }
 
   toConfirmationPage() {
-    console.log("confirm")
+    document.querySelector("main").remove();
+    document.querySelector(".order").classList.add("visible");
+  }
+
+  validateForm(e) {
+    e.preventDefault();
+    let fieldName = e.target.name;
+    let fieldValue = e.target.value;
+    let onlyLettersRgx = /^[A-Za-z]+$/;
+    let lettersAndNumbersRgx = /^[0-9a-zA-Z]+$/;
+    let positiveNumberRgx = /^[1-9]+[0-9]*$/;
+    let positiveNumberAndDashRgx = /^[-1-9–]+[-0-9–]*$/;
+
+    function textAndNumberValidation(e, fieldName, fieldValue, textLength, regexp) {
+      if (regexp.test(fieldValue) && fieldValue.length >= textLength) {
+        e.target.className = "valid";
+        e.target.nextElementSibling.textContent = "";
+        return true;
+      } else {
+        e.target.className = "invalid";
+          if (fieldValue.length < textLength) {
+            e.target.nextElementSibling.textContent = `Too short for ${fieldName}`;
+          }
+
+          if (!regexp.test(fieldValue)) {
+            e.target.nextElementSibling.textContent = `You can't use such symbols in ${fieldName} field`;
+          }
+
+          if (!regexp.test(fieldValue) && fieldValue.length < textLength) {
+            e.target.nextElementSibling.textContent = `You can't use such symbols in ${fieldName} field, too short for ${fieldName}`;
+          }
+
+          if (fieldValue.length === 0) {
+            e.target.className = "";
+            e.target.nextElementSibling.textContent = "";
+          }
+          return false
+      }
+    }
+
+    function dateValidation(e, fieldValue) {
+      let today = new Date();
+      let inputDate = new Date(fieldValue);
+
+      if (fieldValue.length === 0){
+        e.target.className = "invalid";
+        e.target.nextElementSibling.textContent= "Data field can't be empty";
+        return false;
+      } 
+
+      if (inputDate <= today) {
+        e.target.className = "invalid";
+        e.target.nextElementSibling.textContent= "Shipping is available from tomorrow date";
+        return false;
+      } 
+      
+      e.target.className = "valid";
+      e.target.nextElementSibling.textContent= "";
+      return true;
+    }
+
+    function paymentValidation(e) {
+      e.target.parentNode.parentNode.classList.remove("invalid");
+      if (e.target.value.length === 0) {
+        e.target.parentNode.parentNode.lastElementChild.innerText = "Please, choose a value";
+        
+        !Array.from(e.target.parentNode.parentNode.classList).includes("invalid") ? e.target.parentElement.parentElement.className += " invalid" : null;
+      }
+      
+      return e.target.value.length > 0 ? true : false
+    }
+
+    function presentValidation (e) {
+      let elements = Array.from(e.target.parentElement.querySelectorAll('[name="present"]'));
+      let checkedElementsQuantity = elements.reduce((acc,curr) => acc + curr.checked,0);
+      let moreThanTwoSelected = checkedElementsQuantity > 2;
+
+      if (moreThanTwoSelected) {
+        e.target.parentElement.getElementsByTagName("span")[0].textContent = "You can't select more than 2 gifts"
+      } else {
+        e.target.parentElement.getElementsByTagName("span")[0].textContent = ""
+      }
+
+      return !moreThanTwoSelected
+    }
+
+    let validation = {
+      name: (e) => textAndNumberValidation(e, fieldName, fieldValue, 4, onlyLettersRgx),
+      surname: (e) => textAndNumberValidation(e, fieldName, fieldValue, 5, onlyLettersRgx),
+      date: (e) => dateValidation(e, fieldValue),
+      street: (e) => textAndNumberValidation(e, fieldName, fieldValue, 5, lettersAndNumbersRgx), 
+      house: (e) => textAndNumberValidation(e, fieldName, fieldValue, 1, positiveNumberRgx),
+      flat: (e) => textAndNumberValidation(e, fieldName, fieldValue, 1, positiveNumberAndDashRgx),
+      paymenttype: (e) => paymentValidation(e),
+      present: (e) => presentValidation(e)
+    }
+
+    function checkIsFormValid() {
+      validation[fieldName](e) ? this.validFormElements.push(fieldName) : null;
+
+      this.validFormElements = Array.from(new Set(this.validFormElements));
+
+      !validation[fieldName](e) && this.validFormElements.includes(fieldName) ? this.validFormElements.splice(this.validFormElements.indexOf(fieldName), 1) : null;
+
+      if (this.validFormElements.length === Object.keys(validation).length) {
+        this.isFormValid = true;
+        document.querySelector(".order__complete").classList.remove("disabled");
+      } else {
+        this.isFormValid = false;
+        document.querySelector(".order__complete").classList.add("disabled");
+      }
+    }
+    
+    validation[fieldName](e);
+    checkIsFormValid.bind(this)();
+  }
+
+  submitForm(e) {
+    e.preventDefault();
+    console.log("submit")
   }
 }
 

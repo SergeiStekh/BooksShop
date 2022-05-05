@@ -8,6 +8,7 @@ body {
 
 button {
   width: 90%;
+  max-width: 350px;
   margin: 0 auto;
   height: 56px;
   display: grid;
@@ -207,4 +208,147 @@ main {
 
 .modal__close:hover, .bag__remove:hover {
   background-image: url("./assets/images/close-btn-hover.svg");
+}
+
+/* Order */
+
+legend {
+  font-size: 25px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.order {
+  display: none;
+  max-width: 768px;
+  margin: 0 auto;
+  font-size: 20px;
+}
+
+.order.visible {
+  display: block;
+}
+
+.order__title {
+  text-align: center;
+}
+
+.order__field {
+  position: relative;
+  padding-bottom: 10px;
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  align-items: center;
+}
+
+.order__radio {
+  display: grid;
+  grid-template-columns: 100px 100px;
+  grid-gap: 20px;
+}
+
+.order__field.radio-field-wrapper {
+  grid-template-columns: 40px 40px;
+  grid-gap: 10px;
+}
+
+.checkbox-field-wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  grid-row-gap: 10px;
+  align-items: center;
+}
+
+.order__field > input[type="date"] {
+  max-width: 120px;
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  padding: 10px;
+  margin: 0;
+  margin: 10px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+input {
+  display: inline-block;
+  height: 30px;
+  border-radius: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  outline: none;
+}
+
+input[type="checkbox"] {
+  width: 30px;
+  height: 30px;
+}
+
+input[type="radio"] {
+  width: 30px;
+  height: 30px;
+}
+
+input.invalid {
+  border-color: #900;
+  background-color: #FDD;
+} 
+
+input.valid {
+  border-color: rgb(85, 170, 85);
+  background-color: rgb(220, 255, 169);
+} 
+
+input:focus.invalid {
+  outline: none;
+}
+
+.error {
+  position: absolute;
+  top: 30px;
+  width  : max-content;
+  padding: 0;
+  padding-right: 5px;
+  padding-left: 5px;
+  font-size: 80%;
+  color: white;
+  background-color: #900;
+  border-radius: 0 0 5px 5px;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.checkbox-field-wrapper > .error {
+  top: initial;
+  bottom: -10px;
+  left: 0px;
+}
+
+.order__complete {
+  margin-top: 20px;
+  transition: all .3s ease-in;
+}
+
+.order__radio {
+  position: relative;
+  background: #fff;
+}
+
+.order__radio.invalid {
+  background: #FDD;
+}
+
+.order__complete.disabled {
+  border: 1px solid gray;
+}
+
+.order__complete.disabled:hover {
+  background: #fff;
+  color: #000;
+  cursor: initial;
 }

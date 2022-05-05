@@ -296,7 +296,6 @@ input[type="radio"] {
 
 input.invalid {
   border-color: #900;
-  background-color: #FDD;
 } 
 
 input.valid {
@@ -317,7 +316,7 @@ input:focus.invalid {
   padding-left: 5px;
   font-size: 80%;
   color: white;
-  background-color: #900;
+  background: #900;
   border-radius: 0 0 5px 5px;
   box-sizing: border-box;
   z-index: 10;
@@ -336,19 +335,53 @@ input:focus.invalid {
 
 .order__radio {
   position: relative;
-  background: #fff;
+  border: 1px solid black;
 }
 
 .order__radio.invalid {
-  background: #FDD;
+  border: 1px solid #900;
 }
 
 .order__complete.disabled {
   border: 1px solid gray;
+  background: gray;
+  color: #fff;
 }
 
 .order__complete.disabled:hover {
-  background: #fff;
-  color: #000;
+  background: gray;
+  color: white;
   cursor: initial;
+  cursor: not-allowed;
+}
+
+/* Thanks */
+
+.thanks { 
+  display: flex;
+  flex-direction: column;
+}
+
+.thanks__title {
+  text-align: center;
+}
+
+.thanks__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.thanks__item {
+  font-size: 20px;
+  display: grid;
+  grid-template-columns: 250px max-content;
+  align-items: center;
+  max-width: 300px;
+}
+
+.thanks__key-name {
+  font-weight: 700;
 }

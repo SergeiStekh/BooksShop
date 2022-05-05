@@ -2,9 +2,11 @@ class BookStore {
   constructor(booksLink) {
     this.booksLink = booksLink;
     this.bag = [];
+    this.dragBookTitle = "";
     this.total = 0;
     this.validFormElements = ["present"];
     this.isFormValid = false;
+    this.orderInfo = {};
   }
 
   async init() {
@@ -31,7 +33,12 @@ class BookStore {
     if (firstRun) {
       Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
       Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
+      Array.from(document.querySelectorAll(".books__item")).forEach(el => el.addEventListener("dragstart", this.dragStart.bind(this)));
+      document.querySelector(".bag").addEventListener("dragover", this.dragOver.bind(this));
+      document.querySelector(".books").addEventListener("dragover", this.dragOver.bind(this));
+      document.querySelector(".bag").addEventListener("drop", this.drop.bind(this));
       document.querySelector(".order__form").addEventListener("input", this.validateForm.bind(this));
+      document.querySelector(".order__form").addEventListener("focusout", this.validateForm.bind(this));
       document.querySelector(".order__form").addEventListener("submit", this.submitForm.bind(this));
     } else {
       Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
@@ -64,14 +71,17 @@ class BookStore {
     for (let {author, imageLink, price, title} of data) {
       let li = document.createElement("li");
       li.classList.add("books__item");
+      li.setAttribute("draggable", "true")
 
       let imageWrapper = document.createElement("div");
       imageWrapper.classList.add("books__img-wrapper");
+      imageWrapper.setAttribute("draggable", "false");
 
       let imageElement = document.createElement("img");
       imageElement.setAttribute("alt", title);
       imageElement.setAttribute("src", imageLink);
       imageElement.classList.add("books__img");
+      imageElement.setAttribute("draggable", "false")
       imageWrapper.append(imageElement);
       li.append(imageWrapper);
 
@@ -285,16 +295,28 @@ class BookStore {
     }
   }
 
+  dragStart(e) {
+    e.stopPropagation();
+    let title = e.target.querySelector(".books__title").innerText;
+    this.dragBookTitle = title;
+  }
+
+  dragOver(e) {
+    e.preventDefault();
+  }
+
+  drop(e) {
+    e.preventDefault();
+    this.addToBag(e);
+    this.dragBookTitle = "";
+  }
+
   async addToBag(e) {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
 
-      if (!e?.target?.parentNode.querySelector(".books__title")) {
-        return
-      }
-
-      let bookToAddTitle = e.target.parentNode.querySelector(".books__title").innerText;
+      let bookToAddTitle = this.dragBookTitle || e.target.parentNode.querySelector(".books__title").innerText;
       
       let addedBook = Array.from(await this.fetchBooks()).filter(el => el.title === bookToAddTitle)[0];
       
@@ -351,6 +373,9 @@ class BookStore {
 
   validateForm(e) {
     e.preventDefault();
+    if (!e.target.value) {
+      return
+    }
     let fieldName = e.target.name;
     let fieldValue = e.target.value;
     let onlyLettersRgx = /^[A-Za-z]+$/;
@@ -364,7 +389,7 @@ class BookStore {
         e.target.nextElementSibling.textContent = "";
         return true;
       } else {
-        e.target.className = "invalid";
+          e.target.className = "invalid";
           if (fieldValue.length < textLength) {
             e.target.nextElementSibling.textContent = `Too short for ${fieldName}`;
           }
@@ -378,8 +403,8 @@ class BookStore {
           }
 
           if (fieldValue.length === 0) {
-            e.target.className = "";
-            e.target.nextElementSibling.textContent = "";
+            e.target.className = "invalid";
+            e.target.nextElementSibling.textContent = "The field can't be empty";
           }
           return false
       }
@@ -418,7 +443,7 @@ class BookStore {
     }
 
     function presentValidation (e) {
-      let elements = Array.from(e.target.parentElement.querySelectorAll('[name="present"]'));
+      let elements = Array.from(e.target.parentElement.querySelectorAll('.checkbox-field-wrapper > input'));
       let checkedElementsQuantity = elements.reduce((acc,curr) => acc + curr.checked,0);
       let moreThanTwoSelected = checkedElementsQuantity > 2;
 
@@ -439,7 +464,7 @@ class BookStore {
       house: (e) => textAndNumberValidation(e, fieldName, fieldValue, 1, positiveNumberRgx),
       flat: (e) => textAndNumberValidation(e, fieldName, fieldValue, 1, positiveNumberAndDashRgx),
       paymenttype: (e) => paymentValidation(e),
-      present: (e) => presentValidation(e)
+      present: (e) => presentValidation(e),
     }
 
     function checkIsFormValid() {
@@ -457,16 +482,94 @@ class BookStore {
         document.querySelector(".order__complete").classList.add("disabled");
       }
     }
-    
+
     validation[fieldName](e);
+    
     checkIsFormValid.bind(this)();
   }
 
   submitForm(e) {
     e.preventDefault();
-    console.log("submit")
+
+    if (!this.isFormValid) {
+      return
+    }
+    let formData = new FormData(document.forms[0]);
+
+    formData.forEach((value, key) => {
+      if (key === "present") {
+        !this.orderInfo.hasOwnProperty("present") ?  this.orderInfo[key] = [value] : this.orderInfo[key].push(value);
+      } else {
+        this.orderInfo[key] = value;
+      }
+    });
+    document.querySelector(".order").remove();
+
+    function renderThanksForOrderPage() {
+      let fragment = new DocumentFragment();
+
+      let main = document.createElement('main');
+      main.classList.add('thanks');
+
+      let thanksTitle = document.createElement("h1");
+      thanksTitle.classList.add("thanks__title");
+      thanksTitle.innerText = "Thank you for your order, it's been created! Here you can see order information:"
+
+      let thanksWrapper = document.createElement("ul");
+      thanksWrapper.classList.add("thanks__list");
+
+      for (let key in this.orderInfo) {
+        let li = document.createElement("li");
+        li.classList.add("thanks__item");
+
+        let nameOfKey = document.createElement("p");
+        nameOfKey.classList.add("thanks__key-name");
+        nameOfKey.innerText = decodeText(key);
+
+        let valueOfKey = document.createElement("p");
+        valueOfKey.classList.add("thanks__value");
+        valueOfKey.innerText = this.orderInfo[key];
+
+        li.append(nameOfKey);
+        li.append(valueOfKey);
+        thanksWrapper.append(li);
+      }
+
+      main.append(thanksTitle);
+      main.append(thanksWrapper);
+
+      fragment.append(main);
+      document.querySelector("body").prepend(fragment);
+
+      function decodeText(key) {
+        let result = "";
+        switch(key) {
+          case "name": result = "Customer name: ";
+          break;
+          case "surname": result = "Customer surname: ";
+          break;
+          case "date": result = "Shipping date: ";
+          break;
+          case "street": result = "Shipping street: ";
+          break;
+          case "house": result = "Shipping house number: ";
+          break;
+          case "flat": result = "Shipping flat number: ";
+          break;
+          case "paymenttype": result = "Payment type: ";
+          break;
+          case "present": result = "Present: ";
+          break;
+        }
+        return result
+      }
+    }
+
+    renderThanksForOrderPage.bind(this)()
   }
 }
+
+
 
 let bookStore = new BookStore("./assets/JSON/books.json");
 bookStore.init();

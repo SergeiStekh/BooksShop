@@ -373,9 +373,7 @@ class BookStore {
 
   validateForm(e) {
     e.preventDefault();
-    if (!e.target.value) {
-      return
-    }
+    
     let fieldName = e.target.name;
     let fieldValue = e.target.value;
     let onlyLettersRgx = /^[A-Za-z]+$/;

@@ -126,69 +126,138 @@ class BookStore {
     document.body.prepend(fragment);
   }
 
-  async showModal(e) {
+  async showModal(e, modalType = undefined) {
     if (e) {
       e.preventDefault();
     }
 
-    let bookName = e.target.parentNode.querySelector(".books__title").innerText;
+    if (modalType === "bookIsInBag") {
+      let modalText = document.createElement("p");
+      modalText.classList.add("book-in-bag");
+      modalText.innerText = "This book is already in bag!";
+      e.target.append(modalText);
+      setTimeout(() => {
+        modalText.remove();
+      }, 1000);
+    } else {
+      let bookName = e.target.parentNode.querySelector(".books__title").innerText;
 
-    let allBooks = await this.fetchBooks();
+      let allBooks = await this.fetchBooks();
+      
+      let chosenBook = Array.from(allBooks).filter(el => el.title === bookName)[0];
+  
+      let {author, description, imageLink, price, title} = chosenBook;
+      
+      let modalFragment = new DocumentFragment();
+  
+      let modalWrapper = document.createElement("div");
+      modalWrapper.classList.add("modal__wrapper");
+  
+      let modal = document.createElement("div");
+      modal.classList.add("modal");
+      
+      let modalBookImage = document.createElement("img");
+      modalBookImage.setAttribute("src", imageLink);
+      modalBookImage.classList.add("modal__img");
+  
+      let modalTextWrapper = document.createElement("div");
+      modalTextWrapper.classList.add("modal__text-wrapper");
+  
+      let closeBtn = document.createElement("div");
+      closeBtn.classList.add("modal__close");
+      closeBtn.setAttribute("id", "closeModal");
+      modal.append(closeBtn);
+  
+      let modalBookTitle = document.createElement("p");
+      modalBookTitle.classList.add("modal__title");
+      modalBookTitle.innerText = title;
+      modalTextWrapper.append(modalBookTitle);
+  
+      let modalBookAuthor = document.createElement("p");
+      modalBookAuthor.classList.add("modal__author");
+      modalBookAuthor.innerText = author;
+      modalTextWrapper.append(modalBookAuthor);
+  
+      let modalBookDescription = document.createElement("p");
+      modalBookDescription.classList.add("modal__description");
+      modalBookDescription.innerText = description;
+      modalTextWrapper.append(modalBookDescription);
+  
+      let modalBookPrice = document.createElement("p");
+      modalBookPrice.classList.add("modal__price");
+      modalBookPrice.innerText = `${price} €`;
+      modalTextWrapper.append(modalBookPrice);
+  
+      modal.append(modalBookImage);
+      modal.append(modalTextWrapper);
+      modalWrapper.append(modal);
+      modalFragment.append(modalWrapper);
+      document.body.append(modalFragment);
+  
+      document.querySelector(".modal__wrapper").classList.add("visible");
+      document.querySelector(".modal__wrapper").addEventListener("click", this.closeModal.bind(this));
+      document.body.style.overflow = "hidden";
+      document.querySelector("#closeModal").addEventListener("click", this.closeModal);
+    }
+
+    // let bookName = e.target.parentNode.querySelector(".books__title").innerText;
+
+    // let allBooks = await this.fetchBooks();
     
-    let chosenBook = Array.from(allBooks).filter(el => el.title === bookName)[0];
+    // let chosenBook = Array.from(allBooks).filter(el => el.title === bookName)[0];
 
-    let {author, description, imageLink, price, title} = chosenBook;
+    // let {author, description, imageLink, price, title} = chosenBook;
     
-    let modalFragment = new DocumentFragment();
+    // let modalFragment = new DocumentFragment();
 
-    let modalWrapper = document.createElement("div");
-    modalWrapper.classList.add("modal__wrapper");
+    // let modalWrapper = document.createElement("div");
+    // modalWrapper.classList.add("modal__wrapper");
 
-    let modal = document.createElement("div");
-    modal.classList.add("modal");
+    // let modal = document.createElement("div");
+    // modal.classList.add("modal");
     
-    let modalBookImage = document.createElement("img");
-    modalBookImage.setAttribute("src", imageLink);
-    modalBookImage.classList.add("modal__img");
+    // let modalBookImage = document.createElement("img");
+    // modalBookImage.setAttribute("src", imageLink);
+    // modalBookImage.classList.add("modal__img");
 
-    let modalTextWrapper = document.createElement("div");
-    modalTextWrapper.classList.add("modal__text-wrapper");
+    // let modalTextWrapper = document.createElement("div");
+    // modalTextWrapper.classList.add("modal__text-wrapper");
 
-    let closeBtn = document.createElement("div");
-    closeBtn.classList.add("modal__close");
-    closeBtn.setAttribute("id", "closeModal");
-    modal.append(closeBtn);
+    // let closeBtn = document.createElement("div");
+    // closeBtn.classList.add("modal__close");
+    // closeBtn.setAttribute("id", "closeModal");
+    // modal.append(closeBtn);
 
-    let modalBookTitle = document.createElement("p");
-    modalBookTitle.classList.add("modal__title");
-    modalBookTitle.innerText = title;
-    modalTextWrapper.append(modalBookTitle);
+    // let modalBookTitle = document.createElement("p");
+    // modalBookTitle.classList.add("modal__title");
+    // modalBookTitle.innerText = title;
+    // modalTextWrapper.append(modalBookTitle);
 
-    let modalBookAuthor = document.createElement("p");
-    modalBookAuthor.classList.add("modal__author");
-    modalBookAuthor.innerText = author;
-    modalTextWrapper.append(modalBookAuthor);
+    // let modalBookAuthor = document.createElement("p");
+    // modalBookAuthor.classList.add("modal__author");
+    // modalBookAuthor.innerText = author;
+    // modalTextWrapper.append(modalBookAuthor);
 
-    let modalBookDescription = document.createElement("p");
-    modalBookDescription.classList.add("modal__description");
-    modalBookDescription.innerText = description;
-    modalTextWrapper.append(modalBookDescription);
+    // let modalBookDescription = document.createElement("p");
+    // modalBookDescription.classList.add("modal__description");
+    // modalBookDescription.innerText = description;
+    // modalTextWrapper.append(modalBookDescription);
 
-    let modalBookPrice = document.createElement("p");
-    modalBookPrice.classList.add("modal__price");
-    modalBookPrice.innerText = `${price} €`;
-    modalTextWrapper.append(modalBookPrice);
+    // let modalBookPrice = document.createElement("p");
+    // modalBookPrice.classList.add("modal__price");
+    // modalBookPrice.innerText = `${price} €`;
+    // modalTextWrapper.append(modalBookPrice);
 
-    modal.append(modalBookImage);
-    modal.append(modalTextWrapper);
-    modalWrapper.append(modal);
-    modalFragment.append(modalWrapper);
-    document.body.append(modalFragment);
+    // modal.append(modalBookImage);
+    // modal.append(modalTextWrapper);
+    // modalWrapper.append(modal);
+    // modalFragment.append(modalWrapper);
+    // document.body.append(modalFragment);
 
-    document.querySelector(".modal__wrapper").classList.add("visible");
-    document.querySelector(".modal__wrapper").addEventListener("click", this.closeModal.bind(this));
-    document.body.style.overflow = "hidden";
-    document.querySelector("#closeModal").addEventListener("click", this.closeModal);
+    // document.querySelector(".modal__wrapper").classList.add("visible");
+    // document.querySelector(".modal__wrapper").addEventListener("click", this.closeModal.bind(this));
+    // document.body.style.overflow = "hidden";
+    // document.querySelector("#closeModal").addEventListener("click", this.closeModal);
   }
 
   closeModal(e) {
@@ -326,9 +395,10 @@ class BookStore {
 
       if (!isBookInBag) {
         this.bag.push(addedBook);
-      } 
-
-      this.renderBag();
+        this.renderBag();
+      } else {
+        this.showModal(e, "bookIsInBag");
+      }
     }
   }
 

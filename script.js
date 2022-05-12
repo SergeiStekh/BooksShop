@@ -442,10 +442,10 @@ class BookStore {
         let alertElement = document.createElement("p");
         alertElement.classList.add("book-is-in-bag");
         alertElement.textContent = "This book is already in bag!"
-        e.target.parentNode.parentNode.parentNode.parentNode.querySelector(".book__title").append(alertElement);
+        document.body.append(alertElement);
         setTimeout(() => {
           alertElement.remove();
-        }, 500);
+        }, 1000);
       }
 
       this.renderBag();

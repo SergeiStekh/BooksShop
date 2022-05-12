@@ -180,53 +180,6 @@ class BookStore {
 
       li.append(bookInfo);
       ul.append(li);
-
-      // let li = document.createElement("li");
-      // li.classList.add("books__item");
-      // li.setAttribute("draggable", "true")
-
-      // let imageWrapper = document.createElement("div");
-      // imageWrapper.classList.add("books__img-wrapper");
-      // imageWrapper.setAttribute("draggable", "false");
-
-      // let imageElement = document.createElement("img");
-      // imageElement.setAttribute("alt", title);
-      // imageElement.setAttribute("src", imageLink);
-      // imageElement.classList.add("books__img");
-      // imageElement.setAttribute("draggable", "false")
-      // imageWrapper.append(imageElement);
-      // li.append(imageWrapper);
-
-      // let contentWrapper = document.createElement("div");
-      // contentWrapper.classList.add("books__content-wrapper");
-
-      // let titleParagraph = document.createElement("p");
-      // titleParagraph.classList.add("books__title");
-      // titleParagraph.innerHTML = title;
-      // contentWrapper.append(titleParagraph);
-
-      // let authorParagraph = document.createElement("p");
-      // authorParagraph.classList.add("books__author");
-      // authorParagraph.textContent = author;
-      // contentWrapper.append(authorParagraph);
-
-      // let priceParagraph = document.createElement("p");
-      // priceParagraph.classList.add("books__price");
-      // priceParagraph.textContent = `${price} €`;
-      // contentWrapper.append(priceParagraph);
-
-      // let showMore = document.createElement("button");
-      // showMore.classList.add("books__show-more");
-      // showMore.textContent = "Show more";
-      // contentWrapper.append(showMore);
-
-      // let addToBag = document.createElement("button");
-      // addToBag.classList.add("books__add-to-bag");
-      // addToBag.textContent = "Add to bag";
-      // contentWrapper.append(addToBag);
-
-      // li.append(contentWrapper)
-      // ul.append(li);
     }
 
     booksWrapper.append(ul);
@@ -339,18 +292,38 @@ class BookStore {
       let {author, imageLink, title} = el;
 
       let li = document.createElement("li");
-      li.classList.add("bag__item");
-  
-      let imageWrapper = document.createElement("div");
-      imageWrapper.classList.add("bag__img-wrapper");
-  
-      let imageElement = document.createElement("img");
-      imageElement.setAttribute("alt", title);
-      imageElement.setAttribute("src", imageLink);
-      imageElement.classList.add("bag__img");
-      imageWrapper.append(imageElement);
-      li.append(imageWrapper);
-  
+      li.classList.add("book-in-bag__wrapper");
+
+      let bookInBagWrapper = document.createElement("div");
+      bookInBagWrapper.classList.add("book-in-bag");
+
+      let bookInBagBack = document.createElement("div");
+      bookInBagBack.classList.add("book-in-bag__back");
+
+      bookInBagBack.setAttribute("style", `background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0.25) 25%, rgba(0, 0, 0, 0.15) 50%, rgba(255, 255, 255, 0) 100%), url("${imageLink}");`)
+
+      bookInBagWrapper.append(bookInBagBack);
+
+      let bookInBackFrontWrapper = document.createElement("div");
+
+      bookInBackFrontWrapper.classList.add("book-in-bag__front");
+
+      bookInBackFrontWrapper.setAttribute("style", `background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0.25) 25%, rgba(0, 0, 0, 0.15) 50%, rgba(255, 255, 255, 0) 100%), url("${imageLink}");`)
+
+      let bookInBackFrontTrim = document.createElement("div");
+      bookInBackFrontTrim.classList.add("book-in-bag__front_trim");
+
+      let bookInBagFrontImg = document.createElement("img");
+      bookInBagFrontImg.classList.add("book-in-bag__img");
+      bookInBagFrontImg.setAttribute("src", imageLink);
+      bookInBagFrontImg.setAttribute("alt", title);
+
+      bookInBackFrontTrim.append(bookInBagFrontImg);
+
+      bookInBackFrontWrapper.append(bookInBackFrontTrim);
+
+      bookInBagWrapper.append(bookInBackFrontWrapper);
+
       let contentWrapper = document.createElement("div");
       contentWrapper.classList.add("bag__content-wrapper");
   
@@ -368,8 +341,8 @@ class BookStore {
       li.append(removeBookBtn);
       
       contentWrapper.append(authorParagraph);
+      li.append(bookInBagWrapper)
       li.append(contentWrapper);
-
       ul.append(li);
     })
 
@@ -415,12 +388,14 @@ class BookStore {
 
   dragOver(e) {
     e.preventDefault();
+    document.querySelector(".bag").style = "background: aliceblue";
   }
 
   drop(e) {
     e.preventDefault();
     this.addToBag(e);
     this.dragBookTitle = "";
+    document.querySelector(".bag").style = "background: initial";
   }
 
   async addToBag(e) {

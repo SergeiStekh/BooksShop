@@ -31,9 +31,9 @@ class BookStore {
 
   addListeners(firstRun = true) {
     if (firstRun) {
-      Array.from(document.querySelectorAll(".books__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
-      Array.from(document.querySelectorAll(".books__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
-      Array.from(document.querySelectorAll(".books__item")).forEach(el => el.addEventListener("dragstart", this.dragStart.bind(this)));
+      Array.from(document.querySelectorAll(".book__show-more")).forEach(el => el.addEventListener("click", this.showModal.bind(this)));
+      Array.from(document.querySelectorAll(".book__add-to-bag")).forEach(el => el.addEventListener("click", this.addToBag.bind(this)));
+      Array.from(document.querySelectorAll(".book__item")).forEach(el => el.addEventListener("dragstart", this.dragStart.bind(this)));
       document.querySelector(".bag").addEventListener("dragover", this.dragOver.bind(this));
       document.querySelector(".books").addEventListener("dragover", this.dragOver.bind(this));
       document.querySelector(".bag").addEventListener("drop", this.drop.bind(this));
@@ -62,7 +62,7 @@ class BookStore {
     booksWrapper.classList.add("books");
 
     let ul = document.createElement('ul');
-    ul.classList.add("books__list");
+    ul.classList.add("book__list");
     ul.setAttribute("id", "books");
 
     let bagWrapper = document.createElement("div");
@@ -70,51 +70,163 @@ class BookStore {
 
     for (let {author, imageLink, price, title} of data) {
       let li = document.createElement("li");
-      li.classList.add("books__item");
-      li.setAttribute("draggable", "true")
+      li.classList.add("book__item");
+      li.setAttribute("draggable", "true");
 
-      let imageWrapper = document.createElement("div");
-      imageWrapper.classList.add("books__img-wrapper");
-      imageWrapper.setAttribute("draggable", "false");
+      let figure = document.createElement("figure");
+      figure.classList.add("book__art");
 
-      let imageElement = document.createElement("img");
-      imageElement.setAttribute("alt", title);
-      imageElement.setAttribute("src", imageLink);
-      imageElement.classList.add("books__img");
-      imageElement.setAttribute("draggable", "false")
-      imageWrapper.append(imageElement);
-      li.append(imageWrapper);
+      let bookFront = document.createElement("ul");
+      bookFront.classList.add("book__front");
 
-      let contentWrapper = document.createElement("div");
-      contentWrapper.classList.add("books__content-wrapper");
+      let bookImgPage = document.createElement("li");
+      bookImgPage.classList.add("book__page-with-image");
 
-      let titleParagraph = document.createElement("p");
-      titleParagraph.classList.add("books__title");
-      titleParagraph.innerHTML = title;
-      contentWrapper.append(titleParagraph);
+      let bookImg = document.createElement("img");
+      bookImg.classList.add("book__image");
+      bookImg.setAttribute("src", imageLink);
+      bookImg.setAttribute("alt", title);
+      bookImg.setAttribute("width", "100%");
+      bookImg.setAttribute("height", "100%");
 
-      let authorParagraph = document.createElement("p");
-      authorParagraph.classList.add("books__author");
-      authorParagraph.textContent = author;
-      contentWrapper.append(authorParagraph);
+      bookImgPage.append(bookImg);
 
-      let priceParagraph = document.createElement("p");
-      priceParagraph.classList.add("books__price");
-      priceParagraph.textContent = `${price} €`;
-      contentWrapper.append(priceParagraph);
+      let bookImgEmptyPage = document.createElement("li");
+      bookImgEmptyPage.classList.add("book__empty-page");
 
-      let showMore = document.createElement("button");
-      showMore.classList.add("books__show-more");
-      showMore.textContent = "Show more";
-      contentWrapper.append(showMore);
+      bookFront.append(bookImgPage);
+      bookFront.append(bookImgEmptyPage);
+      figure.append(bookFront);
 
-      let addToBag = document.createElement("button");
-      addToBag.classList.add("books__add-to-bag");
+      let bookPages = document.createElement("ul");
+      bookPages.classList.add("book__pages");
+
+      let bookPagesEmptyPageOne = document.createElement("li");
+      bookPagesEmptyPageOne.classList.add("book__empty-page");
+
+      bookPages.append(bookPagesEmptyPageOne);
+
+      let bookPageWithLinks = document.createElement("li");
+      bookPageWithLinks.classList.add("book__empty-page");
+
+      let addToBag = document.createElement("a");
+      addToBag.classList.add("book__add-to-bag");
+      addToBag.setAttribute("href", "#");
       addToBag.textContent = "Add to bag";
-      contentWrapper.append(addToBag);
+      addToBag.setAttribute("draggable", "false");
 
-      li.append(contentWrapper)
+      let showMore = document.createElement("a");
+      showMore.classList.add("book__show-more");
+      showMore.setAttribute("href", "#");
+      showMore.textContent = "Show more";
+      showMore.setAttribute("draggable", "false");
+
+      bookPageWithLinks.append(addToBag);
+      bookPageWithLinks.append(showMore);
+
+      bookPages.append(bookPageWithLinks);
+
+      for (let i = 0; i < 3; i++) {
+        let emptyPage = document.createElement("li");
+        emptyPage.classList.add("book__empty-page");
+        bookPages.append(emptyPage);
+      }
+
+      figure.append(bookPages);
+
+      let bookBack = document.createElement("ul");
+      bookBack.classList.add("book__back");
+
+      for (let i = 0; i < 2; i++) {
+        let emptyPage = document.createElement("li");
+        emptyPage.classList.add("book__empty-page");
+        bookBack.append(emptyPage);
+      }
+
+      figure.append(bookBack);
+
+      let bookSpine = document.createElement("ul");
+      bookSpine.classList.add("book__spine");
+
+      for (let i = 0; i < 2; i++) {
+        let emptyPage = document.createElement("li");
+        emptyPage.classList.add("book__empty-page");
+        bookSpine.append(emptyPage);
+      }
+
+      figure.append(bookSpine);
+      li.append(figure);
+
+      let bookInfo = document.createElement("div");
+      bookInfo.classList.add("book__info");
+
+      let bookTitle = document.createElement("h2");
+      bookTitle.classList.add("book__title");
+      bookTitle.textContent = title;
+
+      bookInfo.append(bookTitle);
+
+      let bookAuthor = document.createElement("span");
+      bookAuthor.classList.add("book__author");
+      bookAuthor.textContent = author;
+
+      bookInfo.append(bookAuthor);
+
+      let bookPrice = document.createElement("span");
+      bookPrice.classList.add("book__price");
+      bookPrice.textContent = `${price} €`;
+
+      bookInfo.append(bookPrice);
+
+      li.append(bookInfo);
       ul.append(li);
+
+      // let li = document.createElement("li");
+      // li.classList.add("books__item");
+      // li.setAttribute("draggable", "true")
+
+      // let imageWrapper = document.createElement("div");
+      // imageWrapper.classList.add("books__img-wrapper");
+      // imageWrapper.setAttribute("draggable", "false");
+
+      // let imageElement = document.createElement("img");
+      // imageElement.setAttribute("alt", title);
+      // imageElement.setAttribute("src", imageLink);
+      // imageElement.classList.add("books__img");
+      // imageElement.setAttribute("draggable", "false")
+      // imageWrapper.append(imageElement);
+      // li.append(imageWrapper);
+
+      // let contentWrapper = document.createElement("div");
+      // contentWrapper.classList.add("books__content-wrapper");
+
+      // let titleParagraph = document.createElement("p");
+      // titleParagraph.classList.add("books__title");
+      // titleParagraph.innerHTML = title;
+      // contentWrapper.append(titleParagraph);
+
+      // let authorParagraph = document.createElement("p");
+      // authorParagraph.classList.add("books__author");
+      // authorParagraph.textContent = author;
+      // contentWrapper.append(authorParagraph);
+
+      // let priceParagraph = document.createElement("p");
+      // priceParagraph.classList.add("books__price");
+      // priceParagraph.textContent = `${price} €`;
+      // contentWrapper.append(priceParagraph);
+
+      // let showMore = document.createElement("button");
+      // showMore.classList.add("books__show-more");
+      // showMore.textContent = "Show more";
+      // contentWrapper.append(showMore);
+
+      // let addToBag = document.createElement("button");
+      // addToBag.classList.add("books__add-to-bag");
+      // addToBag.textContent = "Add to bag";
+      // contentWrapper.append(addToBag);
+
+      // li.append(contentWrapper)
+      // ul.append(li);
     }
 
     booksWrapper.append(ul);
@@ -130,8 +242,8 @@ class BookStore {
     if (e) {
       e.preventDefault();
     }
-
-    let bookName = e.target.parentNode.querySelector(".books__title").innerText;
+    
+    let bookName = e.target.parentNode.parentNode.parentNode.parentNode.querySelector(".book__title").innerText;
 
     let allBooks = await this.fetchBooks();
     
@@ -297,7 +409,7 @@ class BookStore {
 
   dragStart(e) {
     e.stopPropagation();
-    let title = e.target.querySelector(".books__title").innerText;
+    let title = e.target.querySelector(".book__title").innerText;
     this.dragBookTitle = title;
   }
 
@@ -315,8 +427,8 @@ class BookStore {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
-
-      let bookToAddTitle = this.dragBookTitle || e.target.parentNode.querySelector(".books__title").innerText;
+      
+      let bookToAddTitle = this.dragBookTitle || e.target.parentNode.parentNode.parentNode.parentNode.querySelector(".book__title").innerText;
       
       let addedBook = Array.from(await this.fetchBooks()).filter(el => el.title === bookToAddTitle)[0];
       
@@ -326,7 +438,15 @@ class BookStore {
 
       if (!isBookInBag) {
         this.bag.push(addedBook);
-      } 
+      } else {
+        let alertElement = document.createElement("p");
+        alertElement.classList.add("book-is-in-bag");
+        alertElement.textContent = "This book is already in bag!"
+        e.target.parentNode.parentNode.parentNode.parentNode.querySelector(".book__title").append(alertElement);
+        setTimeout(() => {
+          alertElement.remove();
+        }, 500);
+      }
 
       this.renderBag();
     }

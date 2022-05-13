@@ -289,7 +289,7 @@ class BookStore {
     ul.classList.add("bag__list");
 
     this.bag.forEach(el => {
-      let {author, imageLink, title} = el;
+      let {author, imageLink, title, price} = el;
 
       let li = document.createElement("li");
       li.classList.add("book-in-bag__wrapper");
@@ -327,7 +327,7 @@ class BookStore {
       let contentWrapper = document.createElement("div");
       contentWrapper.classList.add("bag__content-wrapper");
   
-      let titleParagraph = document.createElement("p");
+      let titleParagraph = document.createElement("h2");
       titleParagraph.classList.add("bag__title");
       titleParagraph.innerHTML = title;
       contentWrapper.append(titleParagraph);
@@ -335,12 +335,17 @@ class BookStore {
       let authorParagraph = document.createElement("p");
       authorParagraph.classList.add("bag__author");
       authorParagraph.textContent = author;
+
+      let bagPrice = document.createElement("p");
+      bagPrice.classList.add("bag__price");
+      bagPrice.textContent = `${price} €`;
       
       let removeBookBtn = document.createElement("div");
       removeBookBtn.classList.add("bag__remove");
       li.append(removeBookBtn);
       
       contentWrapper.append(authorParagraph);
+      contentWrapper.append(bagPrice);
       li.append(bookInBagWrapper)
       li.append(contentWrapper);
       ul.append(li);
@@ -348,19 +353,24 @@ class BookStore {
 
     fragment.append(ul);
 
+    let totalWrapper = document.createElement("div");
+    totalWrapper.classList.add("total__wrapper");
+
     if (this.bag.length > 0) {
       let totalPriceElement = document.createElement("p");
       totalPriceElement.classList.add("bag__total");
       totalPriceElement.innerText = `Total price: ${this.calculateTotal()} €`;
+
+      totalWrapper.append(totalPriceElement);
       
       bagElement.append(fragment);
-      bagElement.append(totalPriceElement);
       
       if (!document.querySelector(".bag__confirm")) {
         let confirmOrderElement = document.createElement("button");
         confirmOrderElement.classList.add("bag__confirm");
         confirmOrderElement.innerText = "Confirm order";
-        bagElement.append(confirmOrderElement);
+        totalWrapper.append(confirmOrderElement);
+        bagElement.append(totalWrapper);
       }
   
       this.addListeners(false);

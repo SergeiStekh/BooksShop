@@ -68,6 +68,14 @@ class BookStore {
     let bagWrapper = document.createElement("div");
     bagWrapper.classList.add("bag");
 
+    if (this.bag.length === 0) {
+      let bagAdvice = document.createElement("p");
+      bagAdvice.textContent = "Drag the book here to put it in the bag!";
+      bagAdvice.classList.add("bag__advice");
+
+      bagWrapper.append(bagAdvice);
+    }
+
     for (let {author, imageLink, price, title} of data) {
       let li = document.createElement("li");
       li.classList.add("book__item");
@@ -108,6 +116,29 @@ class BookStore {
 
       let bookPageWithLinks = document.createElement("li");
       bookPageWithLinks.classList.add("book__empty-page");
+
+      let bookInfo = document.createElement("div");
+      bookInfo.classList.add("book__info");
+
+      let bookTitle = document.createElement("h2");
+      bookTitle.classList.add("book__title");
+      bookTitle.textContent = title;
+
+      bookInfo.append(bookTitle);
+
+      let bookAuthor = document.createElement("span");
+      bookAuthor.classList.add("book__author");
+      bookAuthor.textContent = author;
+
+      bookInfo.append(bookAuthor);
+
+      let bookPrice = document.createElement("span");
+      bookPrice.classList.add("book__price");
+      bookPrice.textContent = `${price} €`;
+
+      bookInfo.append(bookPrice);
+
+      bookPageWithLinks.append(bookInfo);
 
       let addToBag = document.createElement("a");
       addToBag.classList.add("book__add-to-bag");
@@ -157,38 +188,51 @@ class BookStore {
       figure.append(bookSpine);
       li.append(figure);
 
-      let bookInfo = document.createElement("div");
-      bookInfo.classList.add("book__info");
-
-      let bookTitle = document.createElement("h2");
-      bookTitle.classList.add("book__title");
-      bookTitle.textContent = title;
-
-      bookInfo.append(bookTitle);
-
-      let bookAuthor = document.createElement("span");
-      bookAuthor.classList.add("book__author");
-      bookAuthor.textContent = author;
-
-      bookInfo.append(bookAuthor);
-
-      let bookPrice = document.createElement("span");
-      bookPrice.classList.add("book__price");
-      bookPrice.textContent = `${price} €`;
-
-      bookInfo.append(bookPrice);
-
-      li.append(bookInfo);
       ul.append(li);
     }
 
+    let shellWrapper = document.createElement("div");
+    shellWrapper.classList.add("shell__wrapper")
+
+    let shell = document.createElement("div");
+    shell.classList.add("shell");
+
+    let front = document.createElement("div");
+    front.classList.add("front");
+
+    let back = document.createElement("div");
+    back.classList.add("back");
+
+    let top = document.createElement("div");
+    top.classList.add("top");
+
+    let bottom = document.createElement("div");
+    bottom.classList.add("bottom");
+
+    let left = document.createElement("div");
+    left.classList.add("left");
+
+    let right = document.createElement("div");
+    right.classList.add("right");
+
+    shell.append(front);
+    shell.append(back);
+    shell.append(top);
+    shell.append(bottom);
+    shell.append(left);
+    shell.append(right);
+
+    shellWrapper.append(shell)
+
     booksWrapper.append(ul);
+    booksWrapper.append(shellWrapper);
 
     main.append(booksWrapper);
     main.append(bagWrapper);
 
     fragment.append(main);
     document.body.prepend(fragment);
+    this.showHelpMessage("book__list", "<<<< scroll to see more books >>>>", 4000);
   }
 
   async showModal(e) {
@@ -278,10 +322,30 @@ class BookStore {
     document.body.style.overflow = "visible";
   }
 
+  showHelpMessage(classOfElementToAppendHelp, helpText = "", durationInMs) {
+    let appendTo = document.querySelector("." + classOfElementToAppendHelp);
+    let helpSection = document.createElement("p");
+    helpSection.classList.add("help");
+    helpSection.innerText = helpText;
+    appendTo.append(helpSection);
+
+    setTimeout(() => {
+      helpSection.remove();
+    }, durationInMs);
+  }
+
   renderBag() {
     this.clearBag();
 
     let bagElement = document.querySelector(".bag");
+
+    if (this.bag.length === 0) {
+      let bagAdvice = document.createElement("p");
+      bagAdvice.textContent = "Drag the book here to put it in the bag!";
+      bagAdvice.classList.add("bag__advice");
+
+      bagElement.append(bagAdvice);
+    }
 
     let fragment = new DocumentFragment();
 

@@ -215,6 +215,20 @@ class BookStore {
     let right = document.createElement("div");
     right.classList.add("right");
 
+    let loader = document.createElement("div");
+    loader.classList.add("loader");
+    let loaderAnimation = document.createElement("div");
+    loaderAnimation.classList.add("loader__animation")
+    let loaderImg = document.createElement("img");
+    loaderImg.setAttribute("src", "./assets/images/Pulse-1s-200px.svg")
+    loaderImg.classList.add("loader__animation-img");
+    let loaderText = document.createElement("p");
+    loaderText.innerText = "Welcome to BookStore!";
+    loaderText.classList.add("loader__text");
+    loaderAnimation.append(loaderImg);
+    loader.append(loaderText);
+    loader.append(loaderAnimation);
+
     shell.append(front);
     shell.append(back);
     shell.append(top);
@@ -231,8 +245,13 @@ class BookStore {
     main.append(bagWrapper);
 
     fragment.append(main);
+    fragment.append(loader);
     document.body.prepend(fragment);
-    this.showHelpMessage("book__list", "<<<< scroll to see more books >>>>", 4000);
+
+    setTimeout(() => {
+      loader.remove();
+      this.showHelpMessage("book__list", "<<<< scroll to see more books >>>>", 2000);
+    }, 4000);
   }
 
   async showModal(e) {
@@ -487,6 +506,25 @@ class BookStore {
 
       if (!isBookInBag) {
         this.bag.push(addedBook);
+        if (e.type === "click") {
+          function getCoords(elem) { 
+            var box = elem.getBoundingClientRect();
+            return {
+              top: box.top + pageYOffset,
+              left: box.left + pageXOffset,
+              width: box.width
+            };
+          }
+          let bookItem = e.target.parentElement.parentElement.parentElement.parentElement;
+          bookItem.classList.add("animate-moving");
+          setTimeout(() => {
+            bookItem.classList.remove("animate-moving");
+          }, 300);
+          let coords = getCoords(document.querySelector(".bag"));
+          bookItem.style.top = `${coords.top}px`;
+          console.log(coords.width)
+          bookItem.style.left = `${window.innerWidth - coords.width}px`;
+        }
       } else {
         let alertElement = document.createElement("p");
         alertElement.classList.add("book-is-in-bag");
@@ -516,6 +554,12 @@ class BookStore {
     }
 
     this.bag.splice(removingBookIndex, 1);
+
+    [...document.querySelectorAll(".book__item")].forEach(el =>{ 
+      el.style.top = "0px"; 
+      el.style.left = "0px"
+    });
+    
 
     this.renderBag();
   }

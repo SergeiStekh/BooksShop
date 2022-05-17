@@ -82,14 +82,26 @@ main {
     grid-gap: 20px;
     padding-top: 40px;
     height: 100vh;
+    animation: showUp 2s ease 1s 1;
+}
+
+@keyframes showUp {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Books */
 
 .books {
-    overflow-x: scroll;
+    overflow-x: visible;
+    overflow-y: scroll;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+    cursor: ew-resize;
 }
 
 .books::-webkit-scrollbar {
@@ -694,10 +706,13 @@ input:focus.invalid {
 
 .book__item {
     display: flex;
+    top: 0;
+    left: 0;
     margin-bottom: 30px;
     cursor: grab;
     margin-right: 160px;
     padding-top: 15px;
+    transition: all .3s ease-in-out;
 }
 
 .book__art {
@@ -1275,4 +1290,125 @@ input:focus.invalid {
         background-position: 200% 0, right top, center top, left top;
         background-size: 500% 200%, auto 100%, auto 100%, auto 100%;
     }
+}
+
+
+/* Animation when add to bag */
+
+.animate-moving {
+    position: relative;
+    transition: all .3s ease-in;
+    z-index: 9999999999999;
+    opacity: 0;
+}
+
+
+/* Loader */
+
+.loader {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: center;
+    justify-content: center;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4392F4;
+    animation: loader 4.4s ease 1 ;
+}
+
+@keyframes loader {
+    0% {
+        background-color: #6f757c;
+    }
+    80% {
+        background-color: #e0e5ea;
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+}
+
+.loader__animation {
+    width: 50vw;
+    height: 50vh;
+    margin: 0 auto;
+    border: none;
+}
+
+.loader__animation-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+
+.loader__text {
+    text-align: center;
+    font-size: 40px;
+    text-shadow: #6f757c 2px 2px 0px, #9C9C9C 4px 4px 0px;
+    animation: glitch 4s linear infinite;
+    transform: translateY(-4000px);
+    transition: all .1s ease;
+}
+
+@keyframes glitch{
+2%,64%{
+    transform: translate(2px,0) skew(0deg);
+}
+4%,60%{
+    transform: translate(-2px,0) skew(0deg);
+}
+62%{
+    transform: translate(0,0) skew(5deg); 
+}
+}
+
+.loader__text:before,
+.loader__text:after{
+content: attr(title);
+position: absolute;
+left: 0;
+}
+
+.loader__text:before{
+animation: glitchTop 1s linear infinite;
+clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+-webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+
+@keyframes glitchTop{
+2%,64%{
+    transform: translate(2px,-2px);
+}
+4%,60%{
+    transform: translate(-2px,2px);
+}
+62%{
+    transform: translate(13px,-1px) skew(-13deg); 
+}
+}
+
+.loader__text:after{
+animation: glitchBottom 1.5s linear infinite;
+clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+-webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+}
+
+@keyframes glitchBottom{
+2%,64%{
+    transform: translate(-2px,0);
+}
+4%,60%{
+    transform: translate(-2px,0);
+}
+62%{
+    transform: translate(-22px,5px) skew(21deg); 
+}
 }

@@ -683,6 +683,7 @@ input:focus.invalid {
     -webkit-transition: color 0.3s, border-color 0.3s;
     -moz-transition: color 0.3s, border-color 0.3s;
     transition: color 0.3s, border-color 0.3s;
+    cursor: pointer;
 }
 .book__add-to-bag:hover,
 .book__show-more:hover {

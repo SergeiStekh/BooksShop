@@ -142,13 +142,11 @@ class BookStore {
 
       let addToBag = document.createElement("a");
       addToBag.classList.add("book__add-to-bag");
-      addToBag.setAttribute("href", "#");
       addToBag.textContent = "Add to bag";
       addToBag.setAttribute("draggable", "false");
 
       let showMore = document.createElement("a");
       showMore.classList.add("book__show-more");
-      showMore.setAttribute("href", "#");
       showMore.textContent = "Show more";
       showMore.setAttribute("draggable", "false");
 
@@ -507,12 +505,13 @@ class BookStore {
       if (!isBookInBag) {
         this.bag.push(addedBook);
         if (e.type === "click") {
-          function getCoords(elem) { 
-            var box = elem.getBoundingClientRect();
+          function getCoords(elem, targetElem) { 
+            var box = targetElem.getBoundingClientRect();
+            var book = elem.getBoundingClientRect();
+            
             return {
               top: box.top + pageYOffset,
-              left: box.left + pageXOffset,
-              width: box.width
+              left: window.innerWidth / 2 - book.left,
             };
           }
           let bookItem = e.target.parentElement.parentElement.parentElement.parentElement;
@@ -520,10 +519,9 @@ class BookStore {
           setTimeout(() => {
             bookItem.classList.remove("animate-moving");
           }, 300);
-          let coords = getCoords(document.querySelector(".bag"));
+          let coords = getCoords(e.target.parentElement.parentElement.parentElement, document.querySelector(".bag"));
           bookItem.style.top = `${coords.top}px`;
-          console.log(coords.width)
-          bookItem.style.left = `${window.innerWidth - coords.width}px`;
+          bookItem.style.left = `${coords.left}px`;
         }
       } else {
         let alertElement = document.createElement("p");

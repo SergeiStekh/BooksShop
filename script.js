@@ -347,11 +347,11 @@ class BookStore {
     helpSection.classList.add("help");
     helpSection.innerText = helpText;
     appendTo.append(helpSection);
-    document.querySelector('.books').style.overflow = 'hidden';
+    document.querySelector('.book__list').style.overflow = 'hidden';
 
     setTimeout(() => {
       helpSection.remove();
-      document.querySelector('.books').style.overflow = 'scroll';
+      document.querySelector('.book__list').style.overflow = 'initial';
     }, durationInMs);
   }
 

@@ -222,7 +222,7 @@ class BookStore {
     loaderImg.setAttribute("src", "./assets/images/Pulse-1s-200px.svg")
     loaderImg.classList.add("loader__animation-img");
     let loaderText = document.createElement("p");
-    loaderText.innerText = "Welcome to BookStore!";
+    loaderText.innerText = "Welcome to BookShop!";
     loaderText.classList.add("loader__text");
     loaderAnimation.append(loaderImg);
     loader.append(loaderText);
@@ -249,7 +249,7 @@ class BookStore {
 
     setTimeout(() => {
       loader.remove();
-      this.showHelpMessage("book__list", "<<<< scroll to see more books >>>>", 2000);
+      this.showHelpMessage("book__list", "<<<< Use mousewheel or touchpad to see more books >>>>", 2000);
     }, 4000);
   }
 

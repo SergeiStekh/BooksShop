@@ -41,6 +41,7 @@ class BookStore {
       document.querySelector(".order__form").addEventListener("focusout", this.validateForm.bind(this));
       document.querySelector(".order__form").addEventListener("submit", this.submitForm.bind(this));
       document.querySelector('.books').addEventListener('wheel', this.booksWheelScroll);
+      document.querySelector('.bag').addEventListener('wheel', this.booksWheelScroll);
     } else {
       Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
       if (document.querySelector(".bag__confirm")) {
@@ -782,7 +783,7 @@ class BookStore {
 
   booksWheelScroll(e) {
     e.preventDefault();
-    this.scrollLeft += e.deltaY;
+      this.scrollLeft += e.deltaX;
   }
 }
 

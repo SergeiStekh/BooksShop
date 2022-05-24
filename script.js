@@ -783,7 +783,12 @@ class BookStore {
 
   booksWheelScroll(e) {
     e.preventDefault();
+    let deltaX = -0;
+    if (e.deltaX !== deltaX) {
       this.scrollLeft += e.deltaX;
+    } else {
+      this.scrollLeft += e.deltaY;
+    }
   }
 }
 

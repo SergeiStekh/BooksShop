@@ -135,7 +135,7 @@ main {
     margin: auto;
     position: relative;
     height: 200px;
-    width: 200vw;
+    width: 100vw;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
 }
@@ -369,7 +369,7 @@ main {
 /* Modal */
 
 .help {
-    position: absolute;
+    position: fixed;
     display: grid;
     align-content: center;
     justify-content: center;

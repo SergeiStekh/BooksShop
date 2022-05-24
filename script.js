@@ -590,7 +590,7 @@ class BookStore {
     let onlyLettersRgx = /^[A-Za-z]+$/;
     let lettersAndNumbersRgx = /^[0-9a-zA-Z]+$/;
     let positiveNumberRgx = /^[1-9]+[0-9]*$/;
-    let positiveNumberAndDashRgx = /^[-1-9–]+[-0-9–]*$/;
+    let positiveNumberAndDashRgx = /^[1-9–]+[-0-9–]*$/;
 
     function textAndNumberValidation(e, fieldName, fieldValue, textLength, regexp) {
       if (regexp.test(fieldValue) && fieldValue.length >= textLength) {
@@ -777,8 +777,6 @@ class BookStore {
     renderThanksForOrderPage.bind(this)()
   }
 }
-
-
 
 let bookStore = new BookStore("./assets/JSON/books.json");
 bookStore.init();

@@ -40,8 +40,8 @@ class BookStore {
       document.querySelector(".order__form").addEventListener("input", this.validateForm.bind(this));
       document.querySelector(".order__form").addEventListener("focusout", this.validateForm.bind(this));
       document.querySelector(".order__form").addEventListener("submit", this.submitForm.bind(this));
-      document.querySelector('.books').addEventListener('wheel', this.booksWheelScroll);
-      document.querySelector('.bag').addEventListener('wheel', this.booksWheelScroll);
+      document.querySelector('.books').addEventListener('wheel', this.booksWheelScroll, { passive: false });
+      document.querySelector('.bag').addEventListener('wheel', this.booksWheelScroll,{ passive: false });
     } else {
       Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
       if (document.querySelector(".bag__confirm")) {

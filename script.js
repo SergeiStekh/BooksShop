@@ -40,6 +40,8 @@ class BookStore {
       document.querySelector(".order__form").addEventListener("input", this.validateForm.bind(this));
       document.querySelector(".order__form").addEventListener("focusout", this.validateForm.bind(this));
       document.querySelector(".order__form").addEventListener("submit", this.submitForm.bind(this));
+      document.querySelector('.books').addEventListener('wheel', this.booksWheelScroll, { passive: false });
+      document.querySelector('.bag').addEventListener('wheel', this.booksWheelScroll,{ passive: false });
     } else {
       Array.from(document.querySelectorAll(".bag__remove")).forEach(el => el.addEventListener("click", this.removeBookFromBag.bind(this)));
       if (document.querySelector(".bag__confirm")) {
@@ -142,13 +144,11 @@ class BookStore {
 
       let addToBag = document.createElement("a");
       addToBag.classList.add("book__add-to-bag");
-      addToBag.setAttribute("href", "#");
       addToBag.textContent = "Add to bag";
       addToBag.setAttribute("draggable", "false");
 
       let showMore = document.createElement("a");
       showMore.classList.add("book__show-more");
-      showMore.setAttribute("href", "#");
       showMore.textContent = "Show more";
       showMore.setAttribute("draggable", "false");
 
@@ -223,7 +223,7 @@ class BookStore {
     loaderImg.setAttribute("src", "./assets/images/Pulse-1s-200px.svg")
     loaderImg.classList.add("loader__animation-img");
     let loaderText = document.createElement("p");
-    loaderText.innerText = "Welcome to BookStore!";
+    loaderText.innerText = "Welcome to BookShop!";
     loaderText.classList.add("loader__text");
     loaderAnimation.append(loaderImg);
     loader.append(loaderText);
@@ -250,7 +250,7 @@ class BookStore {
 
     setTimeout(() => {
       loader.remove();
-      this.showHelpMessage("book__list", "<<<< scroll to see more books >>>>", 2000);
+      this.showHelpMessage("book__list", "<<<< Use mousewheel or touchpad to see more books >>>>", 2000);
     }, 4000);
   }
 
@@ -347,9 +347,11 @@ class BookStore {
     helpSection.classList.add("help");
     helpSection.innerText = helpText;
     appendTo.append(helpSection);
+    document.querySelector('.book__list').style.overflow = 'hidden';
 
     setTimeout(() => {
       helpSection.remove();
+      document.querySelector('.book__list').style.overflow = 'initial';
     }, durationInMs);
   }
 
@@ -507,12 +509,13 @@ class BookStore {
       if (!isBookInBag) {
         this.bag.push(addedBook);
         if (e.type === "click") {
-          function getCoords(elem) { 
-            var box = elem.getBoundingClientRect();
+          function getCoords(elem, targetElem) { 
+            var box = targetElem.getBoundingClientRect();
+            var book = elem.getBoundingClientRect();
+            
             return {
               top: box.top + pageYOffset,
-              left: box.left + pageXOffset,
-              width: box.width
+              left: window.innerWidth / 2 - book.left,
             };
           }
           let bookItem = e.target.parentElement.parentElement.parentElement.parentElement;
@@ -520,10 +523,9 @@ class BookStore {
           setTimeout(() => {
             bookItem.classList.remove("animate-moving");
           }, 300);
-          let coords = getCoords(document.querySelector(".bag"));
+          let coords = getCoords(e.target.parentElement.parentElement.parentElement, document.querySelector(".bag"));
           bookItem.style.top = `${coords.top}px`;
-          console.log(coords.width)
-          bookItem.style.left = `${window.innerWidth - coords.width}px`;
+          bookItem.style.left = `${coords.left}px`;
         }
       } else {
         let alertElement = document.createElement("p");
@@ -592,7 +594,7 @@ class BookStore {
     let onlyLettersRgx = /^[A-Za-z]+$/;
     let lettersAndNumbersRgx = /^[0-9a-zA-Z]+$/;
     let positiveNumberRgx = /^[1-9]+[0-9]*$/;
-    let positiveNumberAndDashRgx = /^[-1-9–]+[-0-9–]*$/;
+    let positiveNumberAndDashRgx = /^[1-9–]+[-0-9–]*$/;
 
     function textAndNumberValidation(e, fieldName, fieldValue, textLength, regexp) {
       if (regexp.test(fieldValue) && fieldValue.length >= textLength) {
@@ -778,9 +780,17 @@ class BookStore {
 
     renderThanksForOrderPage.bind(this)()
   }
+
+  booksWheelScroll(e) {
+    e.preventDefault();
+    let deltaX = -0;
+    if (e.deltaX !== deltaX) {
+      this.scrollLeft += e.deltaX;
+    } else {
+      this.scrollLeft += e.deltaY;
+    }
+  }
 }
-
-
 
 let bookStore = new BookStore("./assets/JSON/books.json");
 bookStore.init();

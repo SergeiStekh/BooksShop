@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./normalize.css">
   <link rel="stylesheet" href="./style.css">
+  <link type="Image/x-icon" href="./favicon.ico" rel="icon">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <title>Book Shop</title>
 </head>
 <body>
@@ -16,12 +18,12 @@
         <legend>Private information</legend>
         <div class="order__field">
           <label for="name">Name:*</label>
-          <input type="text" name="name" id="name" required>
+          <input type="text" name="name" id="name" placeholder="Your name" required>
           <span class="error" aria-live="polite"></span>
         </div>
         <div class="order__field">
           <label for="surname">Surname:*</label>
-          <input type="text" name="surname" id="surname" class="order__surname" required>
+          <input type="text" name="surname" id="surname" class="order__surname" placeholder="Your surname" required>
           <span class="error" aria-live="polite"></span>
         </div>
         <div class="order__field">
@@ -31,17 +33,17 @@
         </div>
         <div class="order__field">
           <label for="street">Street:*</label>
-          <input type="text" name="street" id="street" class="orser__street" required>
+          <input type="text" name="street" id="street" class="orser__street" placeholder="Street" required>
           <span class="error" aria-live="polite"></span>
         </div>
         <div class="order__field">
           <label for="house">House:*</label>
-          <input type="text" name="house" id="house" class="orser__house" required>
+          <input type="text" name="house" id="house" class="orser__house" placeholder="House number" required>
           <span class="error" aria-live="polite"></span>
         </div>
         <div class="order__field">
           <label for="flat">Flat:*</label>
-          <input type="text" name="flat" id="flat" class="orser__flat" required>
+          <input type="text" name="flat" id="flat" class="orser__flat" placeholder="Flat number" required>
           <span class="error" aria-live="polite"></span>
         </div>
       </fieldset>

@@ -5,11 +5,16 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
 }
 
 * {
     margin: 0;
     padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 ul {
@@ -134,7 +139,7 @@ main {
     margin: auto;
     position: relative;
     height: 200px;
-    width: 200vw;
+    width: 100vw;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
 }
@@ -368,7 +373,7 @@ main {
 /* Modal */
 
 .help {
-    position: absolute;
+    position: fixed;
     display: grid;
     align-content: center;
     justify-content: center;
@@ -540,19 +545,34 @@ fieldset {
     flex-direction: column;
     padding: 10px;
     margin: 10px 10px 15px;
-    border-radius: 10px;
     background: #fff;
+    border: 2px solid #16a085;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;	
+    border-radius:8px;	
+    color: gray;
 }
 
 input {
     display: inline-block;
     height: 30px;
-    border-radius: 30px;
     padding-left: 15px;
     padding-right: 15px;
     outline: none;
+    border: 2px solid transparent;
     color: black;
-    background-color: 2px solid black;
+    background: #F8FAFC;
+    border-radius: 4px; 
+    transition: all .3s ease;
+    color: #000;
+}
+
+label {
+    color: #000;
+}
+
+input:focus {
+    border-color: #2c3e50;
 }
 
 input[type="checkbox"] {
@@ -599,12 +619,12 @@ input:focus.invalid {
 
 .order__complete {
     margin-top: 20px;
+    margin-bottom: 40px;
     transition: all 0.3s ease-in;
 }
 
 .order__radio {
     position: relative;
-    border: 1px solid black;
 }
 
 .order__radio.invalid {
@@ -673,16 +693,19 @@ input:focus.invalid {
 
 .book__add-to-bag,
 .book__show-more {
-    display: inline-block;
+    display: block;
     text-transform: uppercase;
     border: 2px solid #2c3e50;
     font-size: 0.7em;
     font-weight: 700;
-    padding: 0.1em 0.4em;
+    padding: 0.1em 0.2em;
     text-align: center;
     -webkit-transition: color 0.3s, border-color 0.3s;
     -moz-transition: color 0.3s, border-color 0.3s;
     transition: color 0.3s, border-color 0.3s;
+    cursor: pointer;
+    width: 100px;
+    margin: 0 auto;
 }
 .book__add-to-bag:hover,
 .book__show-more:hover {

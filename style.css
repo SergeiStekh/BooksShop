@@ -1342,6 +1342,7 @@ input:focus.invalid {
     bottom: 0;
     background-color: #4392F4;
     animation: loader 4.4s ease 1 ;
+    z-index: 99999;
 }
 
 @keyframes loader {
@@ -1350,10 +1351,9 @@ input:focus.invalid {
     }
     80% {
         background-color: #e0e5ea;
-        opacity: 1;
     }
     90% {
-        opacity: 0;
+        opacity: 1;
     }
 }
 

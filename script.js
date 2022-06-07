@@ -1,3 +1,5 @@
+import './main.js'
+
 class BookStore {
   constructor(booksLink) {
     this.booksLink = booksLink;
